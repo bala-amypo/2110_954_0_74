@@ -8,5 +8,9 @@ import com.example.demo.entity.Studententity;
 
 public interface Studentservice{
     Studententity saveData(Studententity st);
-    
+    Studententity insertStudententity(Studententity newStudent);
+    List<Studententity> getAllStudententity();
+    Optional<Studententity> getOneStudent(Long id);
+    void deleteStudent(Long id);
+    Student insertStudententity(Student st);
 }
