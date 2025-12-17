@@ -25,7 +25,7 @@
 //         this.name=name;
 //     }
 // }
-Student.java
+
 
 package com.example.demo.entity;
 
