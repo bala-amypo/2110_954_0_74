@@ -1,43 +1,113 @@
-import com.example.demo.controller;
+// import com.example.demo.controller;
 
-import java.util.collection;
+// import java.util.collection;
 
-import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.web.bind.annotation.*;
+
+// import com.example.demo.entity.Studententity;
+// import com.example.demo.service.Studentservice;
+
+// @RestController
+// @RequestMapping("/student")
+// public class Studentcontroller{
+
+//     @Autowired
+//     private Studentservice ser;
+
+//     //post
+//     @PostMapping("/add")
+//     public Studententity addStudent(@RequestBody Studententity st){
+//         return ser.saveData(st);
+//     }
+
+//     //get all
+//     @GetMapping("/getall")
+//     public collection<Studententity> getAllStudents(){
+//         return ser.getAll();
+//     }
+
+//     //get by id
+//     @GetMapping("/get/{id}")
+//     public Studententity getStudentById(@PathVariable int id){
+//         return ser.getById(id);
+//     }
+
+//     //put(update)
+//     @PutMapping("/update/{id}")
+//     public Studententity updateStudent(
+//         @PathVariable int id;
+//         @RequestBody Studententity st){
+//             return ser.update(id,st);
+//         }
+// }
+
+
+package com.example.demo.controller;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.web.bind.annotation.*;
 
-import com.example.demo.entity.Studententity;
-import com.example.demo.service.Studentservice;
+import com.example.demo.entity.Student;
+import com.example.demo.service.StudentService;
 
 @RestController
-@RequestMapping("/student")
-public class Studentcontroller{
+@RequestMapping("/students") // ✅ base path
+public class StudentController {
 
-    @Autowired
-    private Studentservice ser;
+    private final StudentService studentService;
 
-    //post
-    @PostMapping("/add")
-    public Studententity addStudent(@RequestBody Studententity st){
-        return ser.saveData(st);
+    public StudentController(StudentService studentService) {
+        this.studentService = studentService;
     }
 
-    //get all
-    @GetMapping("/getall")
-    public collection<Studententity> getAllStudents(){
-        return ser.getAll();
+    // CREATE
+    @PostMapping
+    public Student postStudent(@RequestBody Student st) {
+        return studentService.insertStudent(st);
     }
 
-    //get by id
-    @GetMapping("/get/{id}")
-    public Studententity getStudentById(@PathVariable int id){
-        return ser.getById(id);
+    // READ ALL
+    @GetMapping
+    public List<Student> getAll() {
+        return studentService.getAllStudents();
     }
 
-    //put(update)
-    @PutMapping("/update/{id}")
-    public Studententity updateStudent(
-        @PathVariable int id;
-        @RequestBody Studententity st){
-            return ser.update(id,st);
+    // READ ONE
+    @GetMapping("/{id}")
+    public Optional<Student> getById(@PathVariable Long id) {
+        return studentService.getOneStudent(id);
+    }
+
+    // UPDATE
+    @PutMapping("/{id}")
+    public String updateStudent(@PathVariable Long id, @RequestBody Student st) {
+        Optional<Student> studentOpt = studentService.getOneStudent(id);
+
+        if (studentOpt.isPresent()) {
+            Student student = studentOpt.get();
+            student.setName(st.getName());
+            student.setEmail(st.getEmail());
+            student.setCgpa(st.getCgpa());
+            student.setDob(st.getDob());
+
+            studentService.insertStudent(student);
+            return "Updated Successfully ✅";
         }
+        return "Student Not Found ❌";
+    }
+
+    // DELETE
+    @DeleteMapping("/{id}")
+    public String deleteStudent(@PathVariable Long id) {
+        Optional<Student> student = studentService.getOneStudent(id);
+
+        if (student.isPresent()) {
+            studentService.deleteStudent(id);
+            return "Deleted Successfully ✅";
+        }
+        return "Student Not Found ❌";
+    }
 }
